@@ -3,21 +3,30 @@ package config
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func GetConnection() (db *sql.DB, err error) {
-	db, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/sport-commerce")
+	err = godotenv.Load()
 	if err != nil {
-		fmt.Println(err.Error())
-		return 
+		log.Fatal("Error loading .env file")
 	}
 
-	err = db.Ping()
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require", os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_USERNAME"), os.Getenv("DB_PASS"), os.Getenv("DB_NAME"))
+
+	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
-		fmt.Println(err.Error())
-		return 
+		log.Fatal(err)
+	}
+
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println("Successfully Connected")
 	}
 
 	return db, nil
