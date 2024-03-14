@@ -38,9 +38,9 @@ func RunApplication() {
 		case "2":
 			role, user_id := Login(db, reader)
 			if role == "Customer" {
-				CustomerCLI(user_id)
+				CustomerCLI(db, user_id)
 			} else {
-				AdminCLI(user_id)
+				AdminCLI(db, user_id)
 			}
 		case "3":
 			fmt.Println("Exiting program.")

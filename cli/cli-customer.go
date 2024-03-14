@@ -1,5 +1,7 @@
 package cli
 
-func CustomerCLI(user_id int) {
+import "database/sql"
+
+func CustomerCLI(db *sql.DB, user_id int) {
 
 }
