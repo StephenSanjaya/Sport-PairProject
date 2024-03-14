@@ -14,9 +14,9 @@ func GetUserReport(db *sql.DB) (user_report []entity.User, err error) {
 
 	var ur entity.User
 
-	query := "SELECT UserID, Username, Email, Address, Balance FROM Users"
+	query := "SELECT UserID, Username, Email, Address, Balance FROM Users WHERE Role = $1"
 
-	rows, err := db.QueryContext(ctx, query)
+	rows, err := db.QueryContext(ctx, query, "Customer")
 	if err != nil {
 		fmt.Println(err.Error())
 		return []entity.User{}, err
