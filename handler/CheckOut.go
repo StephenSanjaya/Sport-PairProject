@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -86,27 +88,6 @@ func ProcessPayment(db *sql.DB, userID int, paymentMethod string) error {
 		return err
 	}
 
-	// Retrieve each pending order for the user
-	rows, err := tx.Query(`
-		SELECT o.OrderID, o.ProductID, o.Quantity
-		FROM Orders o
-		WHERE o.UserID = $1 AND o.Status = 'Pending'
-	`, userID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var orderID, productID, quantity int
-		err = rows.Scan(&orderID, &productID, &quantity)
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
 	// Retrieve the total amount of pending orders for the user
 	err = tx.QueryRow(`
 		SELECT SUM(SubTotal) FROM Orders 
@@ -129,11 +110,71 @@ func ProcessPayment(db *sql.DB, userID int, paymentMethod string) error {
 		// If balance is insufficient, ask the customer to choose another payment method
 		if totalAmount > balance {
 			tx.Rollback()
-			return fmt.Errorf("insufficient balance, please choose another payment method")
+			fmt.Println("insufficient balance, please choose another payment method")
+			validMethods := map[string]bool{
+				"Cash":        true,
+				"Debit Card":  true,
+				"Kredit Card": true,
+			}
+			for {
+				fmt.Print("Enter another payment method (Cash, Debit Card, Kredit card): ")
+				newPaymentMethod := bufio.NewScanner(os.Stdin)
+				newPaymentMethod.Scan()
+				err = newPaymentMethod.Err()
+				if err != nil {
+					return err
+				}
+				setPaymentMethod := newPaymentMethod.Text()
+				if validMethods[setPaymentMethod] {
+					paymentMethod = setPaymentMethod
+					break
+				} else {
+					fmt.Print("Enter available payment method (Cash, Debit Card, Kredit card) only:")
+					continue
+				}
+			}
+
+			// Start a new transaction
+			tx, err = db.Begin()
+			if err != nil {
+				return err
+			}
+		} else {
+			// Deduct the total amount from the user's balance
+			_, err = tx.Exec("UPDATE Users SET Balance = Balance - $2 WHERE UserID = $1", userID, totalAmount)
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	// Retrieve each pending order for the user
+	rows, err := tx.Query(`
+		SELECT o.OrderID, o.ProductID, o.Quantity
+		FROM Orders o
+		WHERE o.UserID = $1 AND o.Status = 'Pending'
+	`, userID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var orderID, productID, quantity int
+		err = rows.Scan(&orderID, &productID, &quantity)
+		if err != nil {
+			tx.Rollback()
+			return err
 		}
 
-		// Deduct the total amount from the user's balance
-		_, err = tx.Exec("UPDATE Users SET Balance = Balance - $2 WHERE UserID = $1", userID, totalAmount)
+		// Decrease the product quantity in the Products table for each order
+		_, err = tx.Exec(`
+			UPDATE Products 
+			SET QuantityInStock = QuantityInStock - $1
+			WHERE ProductID = $2
+		`, quantity, productID)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -150,17 +191,6 @@ func ProcessPayment(db *sql.DB, userID int, paymentMethod string) error {
 		return err
 	}
 
-	// Decrease the product quantity in the Products table for completed orders
-	_, err = tx.Exec(`
-		UPDATE Products SET QuantityInStock = QuantityInStock - o.Quantity
-		FROM Orders o
-		WHERE o.ProductID = Products.ProductID AND o.UserID = $1 AND o.Status = 'Completed'
-	`, userID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
 	// Commit transaction
 	err = tx.Commit()
 	if err != nil {
@@ -169,3 +199,4 @@ func ProcessPayment(db *sql.DB, userID int, paymentMethod string) error {
 
 	return nil
 }
+
