@@ -23,7 +23,7 @@ func RegisterUser(db *sql.DB, newUser entity.User) error {
 	}
 
 	// Insert user data into the database
-	_, err = db.Exec("INSERT INTO Users(Username, Email, Password, Address) VALUES ($1, $2, $3, $4)", newUser.Username, newUser.Email, hashedPassword, newUser.Address)
+	_, err = db.Exec("INSERT INTO Users(Username, Email, Password, Address, Balance) VALUES ($1, $2, $3, $4)", newUser.Username, newUser.Email, hashedPassword, newUser.Address, newUser.Balance)
 	if err != nil {
 		return err
 	}
