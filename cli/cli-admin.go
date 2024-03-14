@@ -36,34 +36,46 @@ func AdminCLI(db *sql.DB, user_id int) {
 		case 4:
 			RemoveProduct(db)
 		case 5:
-			GenerateUserReport(db)
+			var userID int
+			var amountToAdd float64
+			fmt.Println("Increase User Balance")
+			fmt.Print("Enter user ID :")
+			fmt.Scanln(&userID)
+			fmt.Print("Enter Amount to Add :")
+			fmt.Scanln(&amountToAdd)
+			err := handler.IncreaseUserBalanceByID(db, userID, amountToAdd)
+			if err != nil {
+				fmt.Println(err)
+			}
 		case 6:
-			GenerateStockReport(db)
+			GenerateUserReport(db)
 		case 7:
+			GenerateStockReport(db)
+		case 8:
 			transaction, err := handler.GetUserTransactions(db)
 			if err != nil {
 				fmt.Println(err)
 			}
 			handler.PrintTransactions(transaction)
-		case 8:
+		case 9:
 			product, err := handler.GetProductSales(db)
 			if err != nil {
 				fmt.Println(err)
 			}
 			handler.PrintProductSales(product)
-		case 9:
+		case 10:
 			category, err := handler.GetCategorySales(db)
 			if err != nil {
 				fmt.Println(err)
 			}
 			handler.PrintCategorySales(category)
-		case 10:
+		case 11:
 			orderStatus, err := handler.GetOrderStatus(db)
 			if err != nil {
 				fmt.Println(err)
 			}
 			handler.PrintOrderStatus(orderStatus)
-		case 11:
+		case 12:
 			return
 		}
 	}
@@ -71,18 +83,19 @@ func AdminCLI(db *sql.DB, user_id int) {
 
 func ShowMenuAdmin() {
 	fmt.Println("=== ADMIN MENU ====")
-	fmt.Println("1. Show all list of products")
-	fmt.Println("2. Add new product")
-	fmt.Println("3. Increase quantity product")
-	fmt.Println("4. Remove product from menu")
+	fmt.Println("1. Show All List Of Products")
+	fmt.Println("2. Add New Product")
+	fmt.Println("3. Increase Quantity Product")
+	fmt.Println("4. Remove Product from Menu")
+	fmt.Println("5. Increase Customer Balance")
 	fmt.Println("=========== REPORTING ============")
-	fmt.Println("5. Generate user report")
-	fmt.Println("6. Generate stock report")
-	fmt.Println("7. Generate Summary Transaction By Customer report")
-	fmt.Println("8. Generate Summary Sales By Product report")
-	fmt.Println("9. Generate Summary Sales By categories report")
-	fmt.Println("10. Generate Summary Order By Status report")
-	fmt.Println("11. Logout")
+	fmt.Println("6. Generate User Report")
+	fmt.Println("7. Generate Stock Report")
+	fmt.Println("8. Generate Summary Transaction By Customer report")
+	fmt.Println("9. Generate Summary Sales By Product report")
+	fmt.Println("10. Generate Summary Sales By categories report")
+	fmt.Println("11. Generate Summ1ary Order By Status report")
+	fmt.Println("12. Logout")
 }
 
 func GenerateStockReport(db *sql.DB) {

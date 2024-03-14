@@ -35,19 +35,22 @@ func CustomerCLI(db *sql.DB, user_id int) {
 			fmt.Scanln(&userID)
 			fmt.Print("Enter product id:")
 			fmt.Scanln(&productID)
-			fmt.Println("Enter quantity :")
+			fmt.Print("Enter quantity :")
 			fmt.Scanln(&quantity)
 			err := handler.AddItemToCart(db, userID, productID, quantity)
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Print("Do you want to add another item ?:")
+			fmt.Print("Do you want to add another item ? (Y/N):")
 			fmt.Scanln(&selectedMenu)
 			if selectedMenu == "Y" {
 				continue
-			} else {
+			} else if selectedMenu == "N" {
 				fmt.Println("Check Out Process...")
 				handler.CheckoutCartItems(db, userID)
+			} else {
+				fmt.Println("Enter Y/N only")
+				continue
 			}
 			fmt.Println("Enter your payment method (Cash, Member Balance, Debit card, Credit Card) :")
 			paymentMethod := bufio.NewScanner(os.Stdin)
