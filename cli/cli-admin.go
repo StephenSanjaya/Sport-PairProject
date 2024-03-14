@@ -3,13 +3,17 @@ package cli
 import (
 	"Sport-PairProject/entity"
 	"Sport-PairProject/handler"
+	"bufio"
 	"database/sql"
 	"fmt"
+	"os"
+	"strings"
 )
 
 func AdminCLI(db *sql.DB, user_id int) {
 
 	var opt int
+	stdin := bufio.NewReader(os.Stdin)
 
 	for {
 
@@ -26,7 +30,7 @@ func AdminCLI(db *sql.DB, user_id int) {
 		case 1:
 			ShowAllProductList(db)
 		case 2:
-			AddNewProduct(db)
+			AddNewProduct(db, stdin)
 		case 3:
 			AddMoreStockToProduct(db)
 		case 4:
@@ -47,7 +51,7 @@ func ShowMenuAdmin() {
 	fmt.Println("2. Add new product")
 	fmt.Println("3. Increase quantity product")
 	fmt.Println("4. Remove product from menu")
-	fmt.Println("================================")
+	fmt.Println("=========== REPORTING ============")
 	fmt.Println("5. Generate user report")
 	fmt.Println("6. Generate stock report")
 	fmt.Println("7. Logout")
@@ -60,8 +64,13 @@ func GenerateStockReport(db *sql.DB) {
 		return
 	}
 
+	fmt.Println("==== STOCK REPORT ====")
 	for _, v := range stock_report {
-		fmt.Println(v)
+		fmt.Println("Product ID: ", v.ProductID)
+		fmt.Println("Product Name: ", v.ProductName)
+		fmt.Println("Product Price: ", v.Price)
+		fmt.Println("Product Quantity: ", v.QuantityInStock)
+		fmt.Println()
 	}
 }
 
@@ -71,8 +80,15 @@ func GenerateUserReport(db *sql.DB) {
 		fmt.Println("Failed to get user report", err)
 		return
 	}
+
+	fmt.Println("==== USER REPORT ====")
 	for _, v := range user_report {
-		fmt.Println(v)
+		fmt.Println("User ID: ", v.UserID)
+		fmt.Println("User Name: ", v.Username)
+		fmt.Printf("User Balance: %.2f\n", v.Balance)
+		fmt.Println("User Address: ", v.Address)
+		fmt.Println("User Email: ", v.Email)
+		fmt.Println()
 	}
 }
 
@@ -85,17 +101,17 @@ func ShowAllProductList(db *sql.DB) {
 
 	fmt.Println("PRODUCT LIST:")
 	for _, v := range products {
-		fmt.Println()
 		fmt.Println("ID: ", v.ProductID)
 		fmt.Println("Category: ", v.CategoryName)
 		fmt.Println("Product: ", v.ProductName)
 		fmt.Println("Description: ", v.Description)
 		fmt.Println("Price: ", v.Price)
 		fmt.Println("Quantity: ", v.QuantityInStock)
+		fmt.Println()
 	}
 }
 
-func AddNewProduct(db *sql.DB) {
+func AddNewProduct(db *sql.DB, stdin *bufio.Reader) {
 	var category_id, qty int
 	var product_name, description string
 	var price float64
@@ -108,18 +124,21 @@ func AddNewProduct(db *sql.DB) {
 	}
 
 	fmt.Print("Insert product name: ")
-	_, err = fmt.Scanln(&product_name)
+	product_name, err = stdin.ReadString('\n')
 	if err != nil {
 		fmt.Println(err.Error())
+		stdin.ReadString('\n')
 		return
 	}
+	product_name = strings.TrimSpace(product_name)
 
 	fmt.Print("Insert product description: ")
-	_, err = fmt.Scanln(&description)
+	description, err = stdin.ReadString('\n')
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+	description = strings.TrimSpace(description)
 
 	fmt.Print("Insert product price: ")
 	_, err = fmt.Scanln(&price)
@@ -150,18 +169,19 @@ func AddNewProduct(db *sql.DB) {
 	}
 
 	fmt.Println("Successfully add new product")
+	fmt.Println()
 }
 
 func AddMoreStockToProduct(db *sql.DB) {
 	var product_id, qty int
-	fmt.Println("Input Product ID: ")
+	fmt.Print("Input Product ID: ")
 	_, err := fmt.Scanln(&product_id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	fmt.Println("Input quantity: ")
+	fmt.Print("Input quantity: ")
 	_, err = fmt.Scanln(&qty)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -175,6 +195,7 @@ func AddMoreStockToProduct(db *sql.DB) {
 	}
 
 	fmt.Println("Success to increase the product quantity")
+	fmt.Println()
 }
 
 func RemoveProduct(db *sql.DB) {
@@ -187,9 +208,12 @@ func RemoveProduct(db *sql.DB) {
 		return
 	}
 
-	err = handler.DeleteProduct(db, product_id)
-	if err != nil {
-		fmt.Println("Failed to delete product: ", err)
+	boolean := handler.DeleteProduct(db, product_id)
+	if !boolean {
+		fmt.Println("Failed to delete product: product id not found")
 		return
 	}
+
+	fmt.Println("Successfully remove the product")
+	fmt.Println()
 }
