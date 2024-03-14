@@ -11,7 +11,7 @@ import (
 
 func RegisterUser(db *sql.DB, newUser entity.User) error {
 	// Check email format
-	emailRegex := regexp.MustCompile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+	emailRegex := regexp.MustCompile(`[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`)
 	if !emailRegex.MatchString(newUser.Email) {
 		return fmt.Errorf("invalid email format")
 	}
