@@ -39,7 +39,7 @@ func RunApplication() {
 			role, user_id := Login(db, reader)
 			if role == "Customer" {
 				CustomerCLI(db, user_id)
-			} else {
+			} else if role == "Admin" {
 				AdminCLI(db, user_id)
 			}
 		case "3":
@@ -94,7 +94,12 @@ func Register(db *sql.DB, reader *bufio.Reader) {
 		Balance:  200000,
 	}
 
-	handler.RegisterUser(db, newUser)
+	fmt.Println(newUser)
+
+	err = handler.RegisterUser(db, newUser)
+	if err != nil {
+		return
+	}
 
 	fmt.Println("Registration successful.")
 }
@@ -122,7 +127,10 @@ func Login(db *sql.DB, reader *bufio.Reader) (role string, user_id int) {
 		Password: password,
 	}
 
-	role, user_id = handler.LoginUser(db, loginUser)
+	role, user_id, err = handler.LoginUser(db, loginUser)
+	if err != nil {
+		return
+	}
 
 	fmt.Println("Success Login")
 
