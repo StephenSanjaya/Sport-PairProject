@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -129,7 +131,25 @@ func ProcessPayment(db *sql.DB, userID int, paymentMethod string) error {
 		// If balance is insufficient, ask the customer to choose another payment method
 		if totalAmount > balance {
 			tx.Rollback()
-			return fmt.Errorf("insufficient balance, please choose another payment method")
+			fmt.Println("insufficient balance, please choose another payment method")
+			for {
+				fmt.Print("Enter another payment method (Cash, Debit Card, Kredit card): ")
+				newPaymentMethod := bufio.NewScanner(os.Stdin)
+				newPaymentMethod.Scan()
+				err = newPaymentMethod.Err()
+				if err != nil {
+					fmt.Println(err)
+				}
+				setPaymentMethod := newPaymentMethod.Text()
+				if setPaymentMethod == "Cash" || setPaymentMethod == "Debit Card" || setPaymentMethod == "Kredit Card" {
+					paymentMethod = setPaymentMethod
+					break
+				} else {
+					fmt.Print("Enter avaliable payment method (Cash, Debit Card, Kredit card) only:")
+					continue
+				}
+			}
+			// return fmt.Errorf("insufficient balance, please choose another payment method")
 		}
 
 		// Deduct the total amount from the user's balance

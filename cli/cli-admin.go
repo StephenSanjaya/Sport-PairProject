@@ -40,6 +40,30 @@ func AdminCLI(db *sql.DB, user_id int) {
 		case 6:
 			GenerateStockReport(db)
 		case 7:
+			transaction, err := handler.GetUserTransactions(db)
+			if err != nil {
+				fmt.Println(err)
+			}
+			handler.PrintTransactions(transaction)
+		case 8:
+			product, err := handler.GetProductSales(db)
+			if err != nil {
+				fmt.Println(err)
+			}
+			handler.PrintProductSales(product)
+		case 9:
+			category, err := handler.GetCategorySales(db)
+			if err != nil {
+				fmt.Println(err)
+			}
+			handler.PrintCategorySales(category)
+		case 10:
+			orderStatus, err := handler.GetOrderStatus(db)
+			if err != nil {
+				fmt.Println(err)
+			}
+			handler.PrintOrderStatus(orderStatus)
+		case 11:
 			return
 		}
 	}
@@ -54,7 +78,11 @@ func ShowMenuAdmin() {
 	fmt.Println("=========== REPORTING ============")
 	fmt.Println("5. Generate user report")
 	fmt.Println("6. Generate stock report")
-	fmt.Println("7. Logout")
+	fmt.Println("7. Generate Summary Transaction By Customer report")
+	fmt.Println("8. Generate Summary Sales By Product report")
+	fmt.Println("9. Generate Summary Sales By categories report")
+	fmt.Println("10. Generate Summary Order By Status report")
+	fmt.Println("11. Logout")
 }
 
 func GenerateStockReport(db *sql.DB) {

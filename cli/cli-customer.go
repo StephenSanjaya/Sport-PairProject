@@ -1,8 +1,11 @@
 package cli
 
 import (
+	"Sport-PairProject/handler"
+	"bufio"
 	"database/sql"
 	"fmt"
+	"os"
 )
 
 func CustomerCLI(db *sql.DB, user_id int) {
@@ -23,6 +26,44 @@ func CustomerCLI(db *sql.DB, user_id int) {
 		case 1:
 
 		case 2:
+    for {
+			var userID int
+			var productID int
+			var quantity int
+			var selectedMenu string
+			fmt.Print("Enter user id :")
+			fmt.Scanln(&userID)
+			fmt.Print("Enter product id:")
+			fmt.Scanln(&productID)
+			fmt.Println("Enter quantity :")
+			fmt.Scanln(&quantity)
+			err := handler.AddItemToCart(db, userID, productID, quantity)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Print("Do you want to add another item ?:")
+			fmt.Scanln(&selectedMenu)
+			if selectedMenu == "Y" {
+				continue
+			} else {
+				fmt.Println("Check Out Process...")
+				handler.CheckoutCartItems(db, userID)
+			}
+			fmt.Println("Enter your payment method (Cash, Member Balance, Debit card, Credit Card) :")
+			paymentMethod := bufio.NewScanner(os.Stdin)
+			paymentMethod.Scan()
+			err = paymentMethod.Err()
+			if err != nil {
+				fmt.Println(err)
+			}
+			getPaymentMethod := paymentMethod.Text()
+			err = handler.ProcessPayment(db, userID, getPaymentMethod)
+			if err != nil {
+				fmt.Println(err)
+			}
+			return
+
+			}
 
 		case 3:
 			return
