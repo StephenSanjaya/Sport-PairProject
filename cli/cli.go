@@ -43,8 +43,8 @@ func RunApplication() {
 				AdminCLI(db, user_id)
 			}
 		case "3":
-			fmt.Println("Exiting program.")
-			return
+			fmt.Println("Exiting program...")
+			os.Exit(1)
 		default:
 			fmt.Println("Invalid option. Please choose again.")
 		}
@@ -53,8 +53,7 @@ func RunApplication() {
 }
 
 func Register(db *sql.DB, reader *bufio.Reader) {
-	fmt.Println("Registration")
-	fmt.Print("Enter username: ")
+	fmt.Print("\nEnter username: ")
 	username, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("Input proper value", err.Error())
@@ -94,19 +93,17 @@ func Register(db *sql.DB, reader *bufio.Reader) {
 		Balance:  200000,
 	}
 
-	fmt.Println(newUser)
-
 	err = handler.RegisterUser(db, newUser)
 	if err != nil {
 		return
 	}
 
 	fmt.Println("Registration successful.")
+	fmt.Println()
 }
 
 func Login(db *sql.DB, reader *bufio.Reader) (role string, user_id int) {
-	fmt.Println("Login")
-	fmt.Print("Enter email: ")
+	fmt.Print("\nEnter email: ")
 	email, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("Input proper value", err.Error())
@@ -133,6 +130,7 @@ func Login(db *sql.DB, reader *bufio.Reader) (role string, user_id int) {
 	}
 
 	fmt.Println("Success Login")
+	fmt.Println()
 
 	return role, user_id
 }
