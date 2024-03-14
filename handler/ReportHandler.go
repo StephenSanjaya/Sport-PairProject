@@ -29,7 +29,7 @@ func GetUserReport(db *sql.DB) (user_report []entity.UserReport, err error) {
 			fmt.Println(err.Error())
 			return []entity.UserReport{}, err
 		}
-		user_report = append(user_report, p)
+		user_report = append(user_report, ur)
 	}
 
 	return user_report, nil
