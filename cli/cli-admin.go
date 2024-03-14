@@ -34,6 +34,8 @@ func AdminCLI(db *sql.DB, user_id int) {
 		case 5:
 			GenerateUserReport(db)
 		case 6:
+			GenerateStockReport(db)
+		case 7:
 			return
 		}
 	}
@@ -47,7 +49,20 @@ func ShowMenuAdmin() {
 	fmt.Println("4. Remove product from menu")
 	fmt.Println("================================")
 	fmt.Println("5. Generate user report")
-	fmt.Println("6. Logout")
+	fmt.Println("6. Generate stock report")
+	fmt.Println("7. Logout")
+}
+
+func GenerateStockReport(db *sql.DB) {
+	stock_report, err := handler.GetStockReport(db)
+	if err != nil {
+		fmt.Println("Failed to get stock report", err)
+		return
+	}
+
+	for _, v := range stock_report {
+		fmt.Println(v)
+	}
 }
 
 func GenerateUserReport(db *sql.DB) {
