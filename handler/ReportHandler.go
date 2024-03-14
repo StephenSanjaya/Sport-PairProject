@@ -8,18 +8,18 @@ import (
 	"time"
 )
 
-func GetUserReport(db *sql.DB) (user_report []entity.UserReport, err error) {
+func GetUserReport(db *sql.DB) (user_report []entity.User, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var ur entity.UserReport
+	var ur entity.User
 
 	query := "SELECT UserID, Username, Email, Address, Balance FROM Users"
 
 	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
 		fmt.Println(err.Error())
-		return []entity.UserReport{}, err
+		return []entity.User{}, err
 	}
 	defer rows.Close()
 
@@ -27,7 +27,7 @@ func GetUserReport(db *sql.DB) (user_report []entity.UserReport, err error) {
 		err = rows.Scan(&ur.UserID, &ur.Username, &ur.Email, &ur.Address, &ur.Balance)
 		if err != nil {
 			fmt.Println(err.Error())
-			return []entity.UserReport{}, err
+			return []entity.User{}, err
 		}
 		user_report = append(user_report, ur)
 	}

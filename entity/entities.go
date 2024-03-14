@@ -27,9 +27,3 @@ type Order struct {
 	SubTotal                             float64
 	OrderDate, Status, PaymentMethod     string
 }
-
-type UserReport struct {
-	UserID                   int
-	Username, Email, Address string
-	Balance                  float64
-}
