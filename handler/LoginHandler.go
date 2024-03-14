@@ -5,7 +5,7 @@ import (
 	"database/sql"
 )
 
-func LoginUser(db *sql.DB, newUser *entity.Users) (role string, user_id int) {
+func LoginUser(db *sql.DB, newUser entity.User) (role string, user_id int) {
 	//login logic
 
 	return role, user_id

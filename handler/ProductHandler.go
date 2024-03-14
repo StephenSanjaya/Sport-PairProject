@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func InsertNewProduct(db *sql.DB, product entity.Products) error {
+func InsertNewProduct(db *sql.DB, product entity.Product) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -70,18 +70,18 @@ func DeleteProduct(db *sql.DB, product_id int) error {
 	return nil
 }
 
-func GetAllProductList(db *sql.DB) (products []entity.Products, err error) {
+func GetAllProductList(db *sql.DB) (products []entity.Product, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var p entity.Products
+	var p entity.Product
 
 	query := "SELECT p.ProductID, c.Name, p.Name, p.Description, p.Price, p.QuantityInStock FROM Products p JOIN Categoryies c ON p.CategoryID = c.CategoryID"
 
 	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
 		fmt.Println(err.Error())
-		return []entity.Products{}, err
+		return []entity.Product{}, err
 	}
 	defer rows.Close()
 
@@ -89,7 +89,7 @@ func GetAllProductList(db *sql.DB) (products []entity.Products, err error) {
 		err = rows.Scan(&p.ProductID, &p.CategoryName, &p.ProductName, &p.Description, &p.Price, &p.QuantityInStock)
 		if err != nil {
 			fmt.Println(err.Error())
-			return []entity.Products{}, err
+			return []entity.Product{}, err
 		}
 		products = append(products, p)
 	}

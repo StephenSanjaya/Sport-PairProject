@@ -105,7 +105,7 @@ func AddNewProduct(db *sql.DB) {
 		return
 	}
 
-	var new_product = entity.Products{
+	var new_product = entity.Product{
 		CategoryID:      category_id,
 		ProductName:     product_name,
 		Description:     description,

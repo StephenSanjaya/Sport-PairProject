@@ -86,7 +86,7 @@ func Register(db *sql.DB, reader *bufio.Reader) {
 	}
 	address = strings.TrimSpace(address)
 
-	newUser := entity.Users{
+	newUser := entity.User{
 		Username: username,
 		Email:    email,
 		Password: password,
@@ -94,7 +94,7 @@ func Register(db *sql.DB, reader *bufio.Reader) {
 		Balance:  200000,
 	}
 
-	handler.RegisterUser(db, &newUser)
+	handler.RegisterUser(db, newUser)
 
 	fmt.Println("Registration successful.")
 }
@@ -117,12 +117,12 @@ func Login(db *sql.DB, reader *bufio.Reader) (role string, user_id int) {
 	}
 	password = strings.TrimSpace(password)
 
-	var loginUser = entity.Users{
+	var loginUser = entity.User{
 		Email:    email,
 		Password: password,
 	}
 
-	role, user_id = handler.LoginUser(db, &loginUser)
+	role, user_id = handler.LoginUser(db, loginUser)
 
 	fmt.Println("Success Login")
 

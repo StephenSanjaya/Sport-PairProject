@@ -5,6 +5,6 @@ import (
 	"database/sql"
 )
 
-func RegisterUser(db *sql.DB, newUser *entity.Users) {
+func RegisterUser(db *sql.DB, newUser entity.User) {
 	//register logic
 }
