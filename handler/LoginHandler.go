@@ -9,8 +9,6 @@ import (
 )
 
 func LoginUser(db *sql.DB, newUser entity.User) (role string, user_id int) {
-	//login logic
-
 	var email, password string
 	err := db.QueryRow("SELECT UserID, Role, Email, Password FORM Users WHERE Email = ?", newUser.Email).Scan(&user_id, &role, &email, &password)
 	if err != nil {
