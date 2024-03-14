@@ -10,8 +10,7 @@ func RunApplication() {
 	db, err := config.GetConnection()
 	if err != nil {
 		fmt.Println(err.Error())
-		return 
+		return
 	}
-
-	fmt.Println("DB CONNECTED", db.Ping())
+	defer db.Close()
 }
