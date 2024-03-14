@@ -1,5 +1,6 @@
 package entity
 
+
 type User struct {
 	UserID   int
 	Balance  float64
@@ -27,4 +28,5 @@ type Order struct {
 	SubTotal                            float64
 	OrderDate, Status, PaymentMethod    string
 }
+
 
