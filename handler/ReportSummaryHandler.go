@@ -134,6 +134,36 @@ func GetOrderStatus(db *sql.DB) ([]entity.OrderStatus, error) {
 	return statuses, nil
 }
 
+func PrintUserReport(ur []entity.User) {
+	fmt.Println("User Report:")
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------------------------------------")
+	fmt.Printf("|%-10s | %-20s | %-20s | %-20s | %-30s |\n", "User ID", "User Name", "User Balance", "User Address", "User Email")
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------------------------------------")
+	for _, u := range ur {
+		fmt.Printf("|%-10d | %-20s | %-20.2f | %-20s | %-30s |\n", u.UserID, u.Username, u.Balance, u.Address, u.Email)
+	}
+}
+
+func PrintStockReport(product []entity.Product) {
+	fmt.Println("Stock Report:")
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------------------------------------")
+	fmt.Printf("|%-10s | %-20s | %-20s | %-20s |\n", "Product ID", "Product Name", "Product Price", "Product Quantity")
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------------------------------------")
+	for _, p := range product {
+		fmt.Printf("|%-10d | %-20s | %-20.2f | %-20d |\n", p.ProductID, p.ProductName, p.Price, p.QuantityInStock)
+	}
+}
+
+func PrintAllListOfProduct(product []entity.Product) {
+	fmt.Println("Product list:")
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------------------------------------")
+	fmt.Printf("|%-10s | %-20s | %-20s | %-55s | %-20s | %-20s |\n", "Product ID", "Product Category", "Product Name", "Product Description", "Product Price", "Product Quantity")
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------------------------------------")
+	for _, p := range product {
+		fmt.Printf("|%-10d | %-20s | %-20s | %-55s | %-20.2f | %-20d |\n", p.ProductID, p.CategoryName, p.ProductName, p.Description, p.Price, p.QuantityInStock)
+	}
+}
+
 func PrintTransactions(transactions []entity.UserTransaction) {
 	fmt.Println("User Transactions Report:")
 	fmt.Println("-----------------------------------------------------------------------------------------------------------------------------------------------")
