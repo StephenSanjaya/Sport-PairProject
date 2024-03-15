@@ -3,10 +3,10 @@ CREATE TYPE valid_roles AS ENUM ('Customer', 'Admin');
 CREATE TABLE Users (
     UserID SERIAL PRIMARY KEY,
     Username VARCHAR(100) NOT NULL, 
-    Password VARCHAR(50) NOT NULL,
+    Password VARCHAR(100) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
     Address VARCHAR(255),
-    Balance DECIMAL(10, 2),
+    Balance DECIMAL(10, 2) NOT NULL DEFAULT 0,
     Role valid_roles NOT NULL DEFAULT 'Customer' -- new
 );
 
