@@ -104,15 +104,7 @@ func GenerateStockReport(db *sql.DB) {
 		fmt.Println("Failed to get stock report", err)
 		return
 	}
-
-	fmt.Println("==== STOCK REPORT ====")
-	for _, v := range stock_report {
-		fmt.Println("Product ID: ", v.ProductID)
-		fmt.Println("Product Name: ", v.ProductName)
-		fmt.Println("Product Price: ", v.Price)
-		fmt.Println("Product Quantity: ", v.QuantityInStock)
-		fmt.Println()
-	}
+	handler.PrintStockReport(stock_report)
 }
 
 func GenerateUserReport(db *sql.DB) {
@@ -121,16 +113,7 @@ func GenerateUserReport(db *sql.DB) {
 		fmt.Println("Failed to get user report", err)
 		return
 	}
-
-	fmt.Println("==== USER REPORT ====")
-	for _, v := range user_report {
-		fmt.Println("User ID: ", v.UserID)
-		fmt.Println("User Name: ", v.Username)
-		fmt.Printf("User Balance: %.2f\n", v.Balance)
-		fmt.Println("User Address: ", v.Address)
-		fmt.Println("User Email: ", v.Email)
-		fmt.Println()
-	}
+	handler.PrintUserReport(user_report)
 }
 
 func ShowAllProductList(db *sql.DB) {
@@ -139,17 +122,7 @@ func ShowAllProductList(db *sql.DB) {
 		fmt.Println("Failed to show all list of product: ", err)
 		return
 	}
-
-	fmt.Println("PRODUCT LIST:")
-	for _, v := range products {
-		fmt.Println("ID: ", v.ProductID)
-		fmt.Println("Category: ", v.CategoryName)
-		fmt.Println("Product: ", v.ProductName)
-		fmt.Println("Description: ", v.Description)
-		fmt.Println("Price: ", v.Price)
-		fmt.Println("Quantity: ", v.QuantityInStock)
-		fmt.Println()
-	}
+	handler.PrintAllListOfProduct(products)
 }
 
 func AddNewProduct(db *sql.DB, stdin *bufio.Reader) {
